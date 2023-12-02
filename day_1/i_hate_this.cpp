@@ -2,7 +2,7 @@ char get_num(std::string *line)
 {
 	if (line->find("zero") != std::string::npos)
 	{
-		return 0;
+		return '0';
 	}
 	if (line->find("one") != std::string::npos)
 	{

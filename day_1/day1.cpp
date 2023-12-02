@@ -63,7 +63,7 @@ int day_2(std::vector<std::string>* lines)
 	for (std::string line : *lines) 
 	{
 		std::string cal_str;
-		std::cout << "line = " << line << std::endl;
+		// std::cout << "line = " << line << std::endl;
 		for (std::size_t i = 0; i < line.length(); i++)
 		{
 			// std::cout << "i = " << i << ", line[i] = " << line[i] << std::endl;

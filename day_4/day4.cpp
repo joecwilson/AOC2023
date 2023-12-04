@@ -8,11 +8,13 @@
 
 int part_1(std::vector<std::string> *lines);
 int part_1_process_lines(std::string *line);
+int part_2(std::vector<std::string> *lines);
+int part_2_process_lines(std::string *line);
 
 int main (int argc, char *argv[]) 
 {
 	std::ifstream input_file;
-	input_file.open("day4sample.txt");
+	input_file.open("day4actual.txt");
 	assert(input_file.is_open());
 	std::vector<std::string> lines;
 	std::string line;
@@ -22,7 +24,7 @@ int main (int argc, char *argv[])
     }
 	
     input_file.close();
-	int result = part_1(&lines);
+	int result = part_2(&lines);
 	std::cout << result << std::endl;
 	return 0;
 }
@@ -50,32 +52,129 @@ int part_1_process_lines(std::string *line)
     std::unordered_set<int> winning_set;
     std::unordered_set<int> my_set;
 
-    std::size_t pos = 0;
-    std::string delimiter = " ";
-    bool start = true;
-    while ((pos = winning_numbers.find(delimiter)) != std::string::npos) 
+    std::string token = "";
+    for (char num : winning_numbers)
     {
-        std::string token = winning_numbers.substr(0, pos);
-        winning_numbers.erase(0, pos + delimiter.length());
-        std::cout << "token = \"" << token << "\"" << std::endl;
-        if (!start)
+        if (isdigit(num))
+        {
+            token += num;
+            continue;
+        }
+        if (token.compare("") != 0)
         {
             winning_set.insert(std::stoi(token));
         }
-        start = false;
+        token = "";
     }
-    pos = 0;
-    start = true;
-    while ((pos = my_numbers.find(delimiter)) != std::string::npos) 
+    token = "";
+    for (char num : my_numbers)
     {
-        std::string token = my_numbers.substr(0, pos);
-        my_numbers.erase(0, pos + delimiter.length());
-        if (!start)
+        if (isdigit(num))
+        {
+            token += num;
+            continue;
+        }
+        if (token.compare("") != 0)
         {
             my_set.insert(std::stoi(token));
         }
-        start = false;
-        
+        token = "";
     }
-    return 0;
+    int value = 0;
+    for (int number : my_set)
+    {
+        if (winning_set.find(number) != winning_set.end())
+        {
+            if (value == 0)
+            {
+                value = 1;
+            } 
+            else 
+            {
+                value *= 2;
+            }
+        }
+    }
+    return value;
+}
+
+int part_2(std::vector<std::string> *lines)
+{
+    int result = 0;
+    int card = 0;
+    std::vector<int> copies;
+    for (std::string line: *lines)
+    {
+        copies.push_back(1); // 1 copy of each card
+    }
+    for (std::string line : *lines)
+    {
+        std::cout << "Game = " << card + 1 << std::endl;
+        int my_copies = copies.at(card);
+        std::cout << "My_copies = " << my_copies << std::endl; 
+        int cards_won = part_2_process_lines(&line);
+        for (int i = card + 1; i < (cards_won + card + 1); i++)
+        {
+            copies.at(i) += my_copies;
+            // std::cout << "copies[" << i + 1 << "] = " << copies.at(i) << std::endl;
+        }
+        card++;
+    }
+    int cards = 0;
+    for (int number : copies)
+    {
+        cards += number;
+    }
+    return cards;
+}
+
+int part_2_process_lines(std::string *line)
+{
+    std::size_t card_delim = line->find(": ");
+    std::size_t winning_pos = line->find("| ");
+    std::string winning_numbers = line->substr(card_delim + 1, winning_pos - (card_delim + 1));
+    std::string my_numbers = line->substr(winning_pos + 1);
+    my_numbers += ' ';
+
+    std::unordered_set<int> winning_set;
+    std::unordered_set<int> my_set;
+
+    std::string token = "";
+    for (char num : winning_numbers)
+    {
+        if (isdigit(num))
+        {
+            token += num;
+            continue;
+        }
+        if (token.compare("") != 0)
+        {
+            winning_set.insert(std::stoi(token));
+        }
+        token = "";
+    }
+    token = "";
+    for (char num : my_numbers)
+    {
+        if (isdigit(num))
+        {
+            token += num;
+            continue;
+        }
+        if (token.compare("") != 0)
+        {
+            my_set.insert(std::stoi(token));
+        }
+        token = "";
+    }
+    int value = 0;
+    for (int number : my_set)
+    {
+        if (winning_set.find(number) != winning_set.end())
+        {
+            value++;
+        }
+    }
+    std::cout << "value = " << value << std::endl;
+    return value;
 }

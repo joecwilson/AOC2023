@@ -21,7 +21,7 @@ int main (int argc, char *argv[])
     }
 	
     input_file.close();
-	int result = day_2(&lines);
+	int result = day_1(&lines);
 	std::cout << result << std::endl;
 	return 0;
 }
